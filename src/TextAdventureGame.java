@@ -6,6 +6,11 @@ import java.util.Scanner;
 
 public class TextAdventureGame {
 
+    int row;
+    int col;
+
+    Room[][] map;
+
     public static void save(int row, int col) {
         File file = new File("./save/saved_game.txt");
         try {
@@ -32,7 +37,7 @@ public class TextAdventureGame {
         return null;
     }
 
-    public void runGame() {
+    public void initialization() {
         // Initialisering
         Room pinkRoom = new Room("Pink room", "This is a room with pink walls filled with pink furniture");
         Room aHall = new Room("A hall", "A large hallway with a fancy rug on the floor");
@@ -53,12 +58,16 @@ public class TextAdventureGame {
         chest.addItemsToChest(sword);
         aHall.setItem(chest);
 
-        Room[][] map = {
+        map = new Room[][]{
                 {pinkRoom, aHall},
-                {theEntrance, aDarkCave}
-        };
-        int row = 1;
-        int col = 0;
+                {theEntrance, aDarkCave}};
+
+        row = 1;
+        col = 0;
+    }
+
+    public void runGame() {
+
         Scanner input = new Scanner(System.in);
 
         System.out.println("Welcome to the Text Adventure Game (TAG)");
