@@ -37,6 +37,35 @@ public class TextAdventureGame {
         return null;
     }
 
+    public void updatePlayerPosition(String direction) {
+        // Kolla efter riktning
+        if(direction.equalsIgnoreCase("north")) {
+            row--;
+            // Kontrollera så vi inte hamnar utanför kartan
+            if(row < 0) {
+                row = 0;
+            }
+        }
+        else if(direction.equalsIgnoreCase("south")) {
+            row++;
+            if(row >= map.length) {
+                row--;
+            }
+        }
+        else if(direction.equalsIgnoreCase("east")) {
+            col++;
+            if(col >= map[row].length) {
+                col--;
+            }
+        }
+        else if(direction.equalsIgnoreCase("west")) {
+            col--;
+            if(col < 0) {
+                col = 0;
+            }
+        }
+    }
+
     public void initialization() {
         // Initialisering
         Room pinkRoom = new Room("Pink room", "This is a room with pink walls filled with pink furniture");
@@ -77,9 +106,6 @@ public class TextAdventureGame {
         // Här börjar spelloopen
         while(running) {
             // 1. Skriv ut i vilket rum vi är i
-            // System.out.println(map[row][col].getName());
-            // System.out.println(map[row][col].getDescription());
-            // System.out.println(map[row][col].getItemDescription());
             System.out.println(map[row][col].toString());
 
             // 2. Läs in kommando från användaren
@@ -98,36 +124,11 @@ public class TextAdventureGame {
             //      - quit
             if(commandParts[0].equalsIgnoreCase("go")) {
                 // Vi har angett go som kommando
-
+                updatePlayerPosition(commandParts[1]);
 
                 // Kontrollera att man har skrivit något efter go, alltså en riktning
                 if(commandParts.length >= 2) {
-                    // Kolla efter riktning
-                    if(commandParts[1].equalsIgnoreCase("north")) {
-                        row--;
-                        // Kontrollera så vi inte hamnar utanför kartan
-                        if(row < 0) {
-                            row = 0;
-                        }
-                    }
-                    else if(commandParts[1].equalsIgnoreCase("south")) {
-                        row++;
-                        if(row >= map.length) {
-                            row--;
-                        }
-                    }
-                    else if(commandParts[1].equalsIgnoreCase("east")) {
-                        col++;
-                        if(col >= map[row].length) {
-                            col--;
-                        }
-                    }
-                    else if(commandParts[1].equalsIgnoreCase("west")) {
-                        col--;
-                        if(col < 0) {
-                            col = 0;
-                        }
-                    }
+
                     System.out.println("Going " + commandParts[1]);
                 }
                 else {
