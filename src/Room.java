@@ -7,19 +7,43 @@ public class Room {
     private String name;
     private String description;
     private Item item;
-    private boolean hasTrap = false;
+    private boolean hasTrap;
+    private boolean southDoor;
+    private boolean westDoor;
+    private boolean northDoor;
+    private boolean eastDoor;
 
     public int numberOfDoors = 2;
 
     // Store the default values for name and description of a room.
-    public Room(String inName, String inDescription, boolean inHasTrap) {
+    public Room(String inName, String inDescription, boolean inHasTrap, boolean inSouthDoor, boolean inWestDoor, boolean inNorthDoor, boolean inEastDoor) {
         name = inName;
         description = inDescription;
         hasTrap = inHasTrap;
+        southDoor = inSouthDoor;
+        westDoor = inWestDoor;
+        northDoor = inNorthDoor;
+        eastDoor = inEastDoor;
     }
 
-    public boolean getTrap (boolean trap) {
+    public boolean getTrap () {
         return hasTrap;
+    }
+
+    public boolean getSouthDoor() {
+        return southDoor;
+    }
+
+    public boolean getWestDoor() {
+        return westDoor;
+    }
+
+    public boolean getNorthDoor() {
+        return northDoor;
+    }
+
+    public boolean getEastDoor() {
+        return eastDoor;
     }
 
     public String getName() {

@@ -22,10 +22,10 @@ public class Chest extends Item {
     public String toString() {
         String itemDescription = type + "\n";
         itemDescription = itemDescription + description;
-        itemDescription = "Cest contains:\n";
+        itemDescription = "Chest contains:\n";
 
         if(inventory.size()==0) {
-            itemDescription = itemDescription + "The cest is empty";
+            itemDescription = itemDescription + "The chest is empty";
         } else {
             for(int i=0;i<inventory.size();i++) {
                 itemDescription = itemDescription + inventory.get(i).toString() + "\n";
