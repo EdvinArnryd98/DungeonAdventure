@@ -7,13 +7,19 @@ public class Room {
     private String name;
     private String description;
     private Item item;
+    private boolean hasTrap = false;
 
     public int numberOfDoors = 2;
 
     // Store the default values for name and description of a room.
-    public Room(String inName, String inDescription) {
+    public Room(String inName, String inDescription, boolean inHasTrap) {
         name = inName;
         description = inDescription;
+        hasTrap = inHasTrap;
+    }
+
+    public boolean getTrap (boolean trap) {
+        return hasTrap;
     }
 
     public String getName() {

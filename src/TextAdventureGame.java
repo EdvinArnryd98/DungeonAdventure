@@ -13,6 +13,8 @@ public class TextAdventureGame {
 
     Scanner input;
 
+    Player player = new Player("Player1", 50);
+
     public static void save(int row, int col) {
         File file = new File("./save/saved_game.txt");
         try {
@@ -83,16 +85,16 @@ public class TextAdventureGame {
         // Initialisering
         input = new Scanner(System.in);
 
-        Room pinkRoom = new Room("Pink room", "This is a room with pink walls filled with pink furniture");
-        Room aHall = new Room("A hall", "A large hallway with a fancy rug on the floor");
-        Room theEntrance = new Room("The entrance", "A large entrance to the map.");
-        Room aDarkCave = new Room("A dark cave", "A very dark cave without any lights, and it is close to pitch black.");
+        Room pinkRoom = new Room("Pink room", "This is a room with pink walls filled with pink furniture", false);
+        Room aHall = new Room("A hall", "A large hallway with a fancy rug on the floor", false);
+        Room theEntrance = new Room("The entrance", "A large entrance to the map.", false);
+        Room aDarkCave = new Room("A dark cave", "A very dark cave without any lights, and it is close to pitch black.", false);
 
-        Room room1 = new Room("Room1", "THis room is new");
-        Room room2 = new Room("Room2", "THis room is new");
-        Room room3 = new Room("Room3", "THis room is new");
-        Room room4 = new Room("Room4", "THis room is new");
-        Room room5 = new Room("Room5", "THis room is new");
+        Room arena = new Room("Arena", "This is the arena! Fight contestants and earn rewards.", false);
+        Room pit = new Room("Pit", "Watch out! You fell into the pit", true);
+        Room secretRoom = new Room("Secret Room", "There is a big room with a large door, but the door is locked.", false);
+        Room garden = new Room("Garden", "You walk out in the garden. There is a lot of flowers here.", false);
+        Room cellar = new Room("Cellar", "This room is cold, seems like nobody has been here in a while.", false);
 
         // Creating a dagger and adding it to the room theEntrance.
         Item dagger = new Item("Dagger", "A small but very deadly dagger.");
@@ -109,15 +111,15 @@ public class TextAdventureGame {
         aHall.setItem(chest);
 
         map = new Room[][]{
-                {pinkRoom, aHall, room1},
-                {theEntrance, aDarkCave, room2},
-                {room3, room4, room5}};
+                {pinkRoom, aHall, arena},
+                {theEntrance, aDarkCave, pit},
+                {secretRoom, garden, cellar}};
         row = 1;
         col = 0;
     }
 
     public void runGame() {
-        System.out.println("***Welcome to the Text Adventure Game***\n");
+        System.out.println("\n\n***Welcome to the Text Adventure Game***\n");
 
         boolean running = true;
 
@@ -125,6 +127,13 @@ public class TextAdventureGame {
         while(running) {
             // 1. Skriv ut i vilket rum vi är i
             System.out.println(map[row][col].toString());
+
+            // Checks if player walked on a trap
+            if(map[row][col].getTrap(true)){
+                player.walkOnTrap();
+            }
+
+            player.getCurrentHealth();
 
             String[] commandParts = readUserInput();
             String command = commandParts[0];
