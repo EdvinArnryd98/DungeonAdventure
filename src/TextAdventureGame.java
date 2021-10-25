@@ -15,7 +15,7 @@ public class TextAdventureGame {
 
     Scanner input;
 
-    Player player = new Player("Player1", 50);
+    Player player;
 
     public static void save(int row, int col) {
         File file = new File("./save/saved_game.txt");
@@ -113,6 +113,8 @@ public class TextAdventureGame {
         // Initialisering
         input = new Scanner(System.in);
 
+        player = new Player("Player1", 19);
+
         Room pinkRoom = new Room("Pink room", "This is a room with pink walls filled with pink furniture", false, true, false, false, true);
         Room aHall = new Room("A hall", "A large hallway with a fancy rug on the floor", false, true, true, false, true);
         Room arena = new Room("Arena", "This is the arena! Fight contestants and earn rewards.", false, false, true, false, false);
@@ -151,15 +153,14 @@ public class TextAdventureGame {
         System.out.println("\n\n***Welcome to the Text Adventure Game***\n");
 
         boolean running = true;
+        boolean startRoom = true;
 
         // Här börjar spelloopen
         while(running) {
             // 1. Skriv ut i vilket rum vi är i
-            System.out.println(map[row][col].toString());
-
-            // Checks if player walked on a trap
-            if(map[row][col].getTrap()){
-                player.walkOnTrap();
+            if(startRoom){
+                System.out.println(map[row][col].toString());
+                startRoom = false;
             }
 
             player.getCurrentHealth();
@@ -201,6 +202,18 @@ public class TextAdventureGame {
             else if(command.equalsIgnoreCase("quit")) {
                 running = false;
             }
+
+            System.out.println(map[row][col].toString());
+
+            if(map[row][col].getTrap()){
+                player.walkOnTrap();
+            }
+
+            if(player.healthNumber() < 1){
+                player.playerDeath();
+                running = false;
+            }
+
         }
     }
 
@@ -228,6 +241,6 @@ public class TextAdventureGame {
     }
 
     public void quit() {
-        System.out.println("***Thanks for playing***");
+        System.out.println("***GAME OVER***");
     }
 }

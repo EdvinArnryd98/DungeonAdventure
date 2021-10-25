@@ -19,5 +19,13 @@ public class Player {
         System.out.println("Your HP: " + currentHealth);
     }
 
+    public int healthNumber(){
+        return currentHealth;
+    }
+
+    public void playerDeath() {
+        System.out.println("Your Health got too low.\nYou don't feel so good...");
+    }
+
 
 }

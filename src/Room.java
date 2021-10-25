@@ -80,14 +80,14 @@ public class Room {
     // Create a string representation of a room to show in the main game loop.
     @Override
     public String toString() {
-        String roomString = "Current position: " + getName() + "\n\n";                           // roomstring: "A hall"
+        String roomString = "\nCurrent position: " + getName() + "\n\n";                           // roomstring: "A hall"
         roomString = roomString + getDescription() + "\n";              // roomstring: "A hall" + "this is a description of a hall.
-        roomString = roomString + "Items in here:\n---------------\n";             // roomstring: "A hall" + "this is a ..." + "Items..."
+        roomString = roomString + "\tItems in here:\n\t---------------\n";             // roomstring: "A hall" + "this is a ..." + "Items..."
 
         // We need ot make sure that there is an item in the room before we try to call
         // a function in that item.
         if(item != null) {
-            roomString = roomString + item.getType();
+            roomString = roomString + "\t" +item.getType();
         }
 
         return roomString;
