@@ -9,7 +9,7 @@ public class TextAdventureGame {
     int row;
     int col;
 
-    int checkForDoors = 1;
+    boolean isDoorInDirection;
 
     Room[][] map;
 
@@ -46,9 +46,9 @@ public class TextAdventureGame {
     public void updatePlayerPosition(String direction) {
         System.out.println("\n/////////////////////////////////////////////////////////\n");
         // Kolla efter riktning
-        checkForDoors = 1;
+        isDoorInDirection = true;
         if(direction.equalsIgnoreCase("north")) {
-            if(map[row][col].getNorthDoor()) {
+            if(getCurrentRoom().getNorthDoor()) {
                 row--;
                 // Kontrollera så vi inte hamnar utanför kartan
                 if (row < 0) {
@@ -56,43 +56,43 @@ public class TextAdventureGame {
                 }
             }
             else{
-                checkForDoors = 2;
+                isDoorInDirection = false;
                 System.out.println("There is no door there!");
             }
         }
         else if(direction.equalsIgnoreCase("south")) {
-            if(map[row][col].getSouthDoor()) {
+            if(getCurrentRoom().getSouthDoor()) {
                 row++;
                 if (row >= map.length) {
                     row--;
                 }
             }
             else{
-                checkForDoors = 2;
+                isDoorInDirection = false;
                 System.out.println("There is no door there!");
             }
         }
         else if(direction.equalsIgnoreCase("east")) {
-            if(map[row][col].getEastDoor()) {
+            if(getCurrentRoom().getEastDoor()) {
                 col++;
                 if (col >= map[row].length) {
                     col--;
                 }
             }
             else{
-                checkForDoors = 2;
+                isDoorInDirection = false;
                 System.out.println("There is no door there!");
             }
         }
         else if(direction.equalsIgnoreCase("west")) {
-            if (map[row][col].getWestDoor()) {
+            if (getCurrentRoom().getWestDoor()) {
                 col--;
                 if (col < 0) {
                     col = 0;
                 }
             }
             else{
-                checkForDoors = 2;
+                isDoorInDirection = false;
                 System.out.println("There is no door there!");
             }
         }
@@ -107,6 +107,10 @@ public class TextAdventureGame {
         //    Vi delar upp det inmatade värdet vid varje mellanslag
         String[] commandParts = command.split(" ");
         return commandParts;
+    }
+
+    public Room getCurrentRoom(){
+        return map[row][col];
     }
 
     public void initialization() {
@@ -125,11 +129,14 @@ public class TextAdventureGame {
 
         Room secretRoom = new Room("Secret Room", "There is a big room with a large door, but the door is locked.", false, false, false, true, true);
         Room garden = new Room("Garden", "You walk out in the garden. There is a lot of flowers here.", false, false, true, true, true);
-        Room cellar = new Room("Cellar", "This room is cold, seems like nobody has been here in a while.", false, false, true, true, true);
+        Room cellar = new Room("Cellar", "This room is cold, seems like nobody has been here in a while.", false, false, true, false, true);
 
         // Creating a dagger and adding it to the room theEntrance.
         Item dagger = new Item("Dagger", "A small but very deadly dagger.");
         theEntrance.setItem(dagger);
+
+        Item axe = new Item("Axe", "A hatchet used for cutting wood");
+        cellar.setItem(axe);
 
         // Creating a chest with three items and places it in the hall on the map.
         Chest chest = new Chest("Chest", "A large chest containing other items");
@@ -159,7 +166,7 @@ public class TextAdventureGame {
         while(running) {
             // 1. Skriv ut i vilket rum vi är i
             if(startRoom){
-                System.out.println(map[row][col].toString());
+                System.out.println(getCurrentRoom().toString());
                 startRoom = false;
             }
 
@@ -177,7 +184,7 @@ public class TextAdventureGame {
                 // Kontrollera att man har skrivit något efter go, alltså en riktning
                 if(commandParts.length == 2) {
                     updatePlayerPosition(commandParts[1]);
-                    if(checkForDoors == 1) {
+                    if(isDoorInDirection) {
                         System.out.println("Going " + commandParts[1]);
                     }
                 }
@@ -187,7 +194,7 @@ public class TextAdventureGame {
             }
 
             else if(command.equalsIgnoreCase("look")) {
-                String itemDescription = map[row][col].getItemDescription();
+                String itemDescription = getCurrentRoom().getItemDescription();
                 System.out.println(itemDescription);
             }
 
@@ -203,9 +210,24 @@ public class TextAdventureGame {
                 running = false;
             }
 
-            System.out.println(map[row][col].toString());
+            else if(command.equalsIgnoreCase("loot")){
+                if(getCurrentRoom().getItem() == null) {
+                    System.out.println("There is no item in here!");
+                }
+                else{
+                    System.out.println("You loot the " + getCurrentRoom().getItemType() + "!");
+                    player.pickUpItem(getCurrentRoom().getItem());
+                    getCurrentRoom().removeItem();
+                }
+            }
 
-            if(map[row][col].getTrap()){
+            else if(command.equalsIgnoreCase("inventory")){
+                player.listInventory();
+            }
+
+            System.out.println(getCurrentRoom().toString());
+
+            if(getCurrentRoom().getTrap()){
                 player.walkOnTrap();
             }
 
@@ -213,7 +235,6 @@ public class TextAdventureGame {
                 player.playerDeath();
                 running = false;
             }
-
         }
     }
 

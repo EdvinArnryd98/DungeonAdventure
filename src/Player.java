@@ -1,6 +1,9 @@
+import java.util.ArrayList;
+
 public class Player {
     private String name;
     private int currentHealth;
+    ArrayList<Item> inventory = new ArrayList<Item>();
 
     public Player(String inName, int inStartHealth){
         name = inName;
@@ -25,6 +28,17 @@ public class Player {
 
     public void playerDeath() {
         System.out.println("Your Health got too low.\nYou don't feel so good...");
+    }
+
+    public void listInventory() {
+        System.out.println("Your inventory:");
+        for (int i = 0; i < inventory.size(); i++){
+            System.out.println(inventory.get(i).type);
+        }
+    }
+
+    public void pickUpItem(Item item) {
+        inventory.add(item);
     }
 
 

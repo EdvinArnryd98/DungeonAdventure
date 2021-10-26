@@ -64,6 +64,20 @@ public class Room {
         }
     }
 
+    //public String lootItemInCurrentRoom() {}
+
+    public Item getItem(){
+        return item;
+    }
+
+    public void removeItem() {
+        item = null;
+    }
+
+    public String getItemType() {
+        return item.type;
+    }
+
     public void setName(String newName) {
         name = newName;
     }
