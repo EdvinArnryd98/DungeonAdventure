@@ -12,10 +12,13 @@ public class TextAdventureGame {
     boolean isDoorInDirection;
 
     Room[][] map;
-
-    Scanner input;
+    Room garden;
 
     Player player;
+
+    Item axe;
+
+    Scanner input = new Scanner(System.in);
 
     public static void save(int row, int col) {
         File file = new File("./save/saved_game.txt");
@@ -113,29 +116,56 @@ public class TextAdventureGame {
         return map[row][col];
     }
 
+    public void specialRoomEvent(){
+
+    boolean isGardenTreeExisting = true;
+        if(isGardenTreeExisting && getCurrentRoom().getName() == "Garden" && player.inventory.contains(axe)){
+            System.out.println("Do you want to use your Axe?\nYes or No");
+            String[] commandParts = readUserInput();
+            String command = commandParts[0];
+            if(command.equalsIgnoreCase("yes")){
+                System.out.println("You chop down the tree in front of you");
+                getCurrentRoom().setSouthDoor();
+                player.inventory.remove(axe);
+                garden.setDescription("You walk into the garden.");
+                isGardenTreeExisting = false;
+            }
+            else if(command.equalsIgnoreCase("no")){
+                System.out.println("You stand still and stare at the grass");
+            }
+            else{
+                System.out.println("wrong command, try again!");
+
+            }
+        }
+    }
+
     public void initialization() {
         // Initialisering
-        input = new Scanner(System.in);
 
         player = new Player("Player1", 19);
 
         Room pinkRoom = new Room("Pink room", "This is a room with pink walls filled with pink furniture", false, true, false, false, true);
-        Room aHall = new Room("A hall", "A large hallway with a fancy rug on the floor", false, true, true, false, true);
+        Room aHall = new Room("A hall", "A large hallway with a fancy rug on the floor", false, false, false, true, true);
         Room arena = new Room("Arena", "This is the arena! Fight contestants and earn rewards.", false, false, true, false, false);
 
         Room theEntrance = new Room("The entrance", "A large entrance to the map.", false, true, false, true, false);
         Room aDarkCave = new Room("A dark cave", "A very dark cave without any lights, and it is close to pitch black.", false, true, false, true, true);
         Room pit = new Room("Pit", "Watch out! You fell into the pit", true, false, true, false, false);
 
-        Room secretRoom = new Room("Secret Room", "There is a big room with a large door, but the door is locked.", false, false, false, true, true);
-        Room garden = new Room("Garden", "You walk out in the garden. There is a lot of flowers here.", false, false, true, true, true);
+        Room secretRoom = new Room("Secret Room", "There is a big room with a large door, but the door is locked.", false, true, true, false, true);
+        garden = new Room("Garden", "You walk out in the garden. There is a tree blocking the way.", false, false, true, true, true);
         Room cellar = new Room("Cellar", "This room is cold, seems like nobody has been here in a while.", false, false, true, false, true);
+
+        Room emptySpace1 = new Room("", "", false,false,false,false,false);
+        Room emptySpace2 = new Room("", "", false,false,false,false,false);
+        Room forest = new Room("Forest", "You are in a forest. You can hear the wind blowing in the tree tops.", false, false, false, true, false);
 
         // Creating a dagger and adding it to the room theEntrance.
         Item dagger = new Item("Dagger", "A small but very deadly dagger.");
         theEntrance.setItem(dagger);
 
-        Item axe = new Item("Axe", "A hatchet used for cutting wood");
+        axe = new Item("Axe", "A hatchet used for cutting wood");
         cellar.setItem(axe);
 
         // Creating a chest with three items and places it in the hall on the map.
@@ -149,9 +179,10 @@ public class TextAdventureGame {
         aHall.setItem(chest);
 
         map = new Room[][]{
-                {pinkRoom, aHall, arena},
+                {pinkRoom, secretRoom, arena},
                 {theEntrance, aDarkCave, pit},
-                {secretRoom, garden, cellar}};
+                {aHall, garden, cellar},
+                {emptySpace1, forest, emptySpace2}};
         row = 1;
         col = 0;
     }
@@ -222,10 +253,17 @@ public class TextAdventureGame {
             }
 
             else if(command.equalsIgnoreCase("inventory")){
-                player.listInventory();
+                if(player.inventory.isEmpty()){
+                    System.out.println("Your inventory is empty.");
+                }
+                else {
+                    player.listInventory();
+                }
             }
 
             System.out.println(getCurrentRoom().toString());
+
+            specialRoomEvent();
 
             if(getCurrentRoom().getTrap()){
                 player.walkOnTrap();

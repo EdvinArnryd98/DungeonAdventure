@@ -54,6 +54,10 @@ public class Room {
         return description;
     }
 
+    public void setSouthDoor(){
+        southDoor = true;
+    }
+
     // Return the description of an item.
     public String getItemDescription() {
         // if item is not null (i.e. we have already stored an item in item.
