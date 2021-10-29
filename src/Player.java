@@ -3,6 +3,7 @@ import java.util.ArrayList;
 public class Player {
     private String name;
     private int currentHealth;
+    Room currentRoom;
     ArrayList<Item> inventory = new ArrayList<Item>();
 
     public Player(String inName, int inStartHealth){
@@ -26,6 +27,10 @@ public class Player {
         return currentHealth;
     }
 
+    public int addCurrentHealth(int health){
+        return currentHealth += health;
+    }
+
     public void playerDeath() {
         System.out.println("Your Health got too low.\nYou don't feel so good...");
     }
@@ -39,6 +44,14 @@ public class Player {
 
     public void pickUpItem(Item item) {
         inventory.add(item);
+    }
+
+    public void setCurrentRoom(Room room){
+        currentRoom = room;
+    }
+
+    public Room getCurrentRoom(){
+        return currentRoom;
     }
 
 

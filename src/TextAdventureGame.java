@@ -9,6 +9,9 @@ public class TextAdventureGame {
     int row;
     int col;
 
+    boolean isWellFull = true;
+    boolean isGardenTreeExisting = true;
+
     boolean isDoorInDirection;
 
     Room[][] map;
@@ -51,7 +54,7 @@ public class TextAdventureGame {
         // Kolla efter riktning
         isDoorInDirection = true;
         if(direction.equalsIgnoreCase("north")) {
-            if(getCurrentRoom().getNorthDoor()) {
+            if(player.getCurrentRoom().getNorthDoor()) {
                 row--;
                 // Kontrollera så vi inte hamnar utanför kartan
                 if (row < 0) {
@@ -64,7 +67,7 @@ public class TextAdventureGame {
             }
         }
         else if(direction.equalsIgnoreCase("south")) {
-            if(getCurrentRoom().getSouthDoor()) {
+            if(player.getCurrentRoom().getSouthDoor()) {
                 row++;
                 if (row >= map.length) {
                     row--;
@@ -76,7 +79,7 @@ public class TextAdventureGame {
             }
         }
         else if(direction.equalsIgnoreCase("east")) {
-            if(getCurrentRoom().getEastDoor()) {
+            if(player.getCurrentRoom().getEastDoor()) {
                 col++;
                 if (col >= map[row].length) {
                     col--;
@@ -88,7 +91,7 @@ public class TextAdventureGame {
             }
         }
         else if(direction.equalsIgnoreCase("west")) {
-            if (getCurrentRoom().getWestDoor()) {
+            if (player.getCurrentRoom().getWestDoor()) {
                 col--;
                 if (col < 0) {
                     col = 0;
@@ -112,26 +115,38 @@ public class TextAdventureGame {
         return commandParts;
     }
 
-    public Room getCurrentRoom(){
-        return map[row][col];
-    }
-
     public void specialRoomEvent(){
-
-    boolean isGardenTreeExisting = true;
-        if(isGardenTreeExisting && getCurrentRoom().getName() == "Garden" && player.inventory.contains(axe)){
+        if(isGardenTreeExisting && player.getCurrentRoom().getName() == "Garden" && player.inventory.contains(axe)){
             System.out.println("Do you want to use your Axe?\nYes or No");
             String[] commandParts = readUserInput();
             String command = commandParts[0];
             if(command.equalsIgnoreCase("yes")){
                 System.out.println("You chop down the tree in front of you");
-                getCurrentRoom().setSouthDoor();
+                player.getCurrentRoom().setSouthDoor();
                 player.inventory.remove(axe);
                 garden.setDescription("You walk into the garden.");
                 isGardenTreeExisting = false;
             }
             else if(command.equalsIgnoreCase("no")){
                 System.out.println("You stand still and stare at the grass");
+            }
+            else{
+                System.out.println("wrong command, try again!");
+
+            }
+        }
+
+        if(isWellFull && player.getCurrentRoom().getName() == "Forest"){
+            System.out.println("There is a well with fresh water, do you want a drink?\nYes or no");
+            String[] commandParts = readUserInput();
+            String command = commandParts[0];
+            if(command.equalsIgnoreCase("yes")){
+                System.out.println("You drink from the well and heal 15 points");
+                player.addCurrentHealth(15);
+                isWellFull = false;
+            }
+            else if(command.equalsIgnoreCase("no")){
+                System.out.println("You feel the cold breeze from the wind...");
             }
             else{
                 System.out.println("wrong command, try again!");
@@ -187,7 +202,7 @@ public class TextAdventureGame {
         col = 0;
     }
 
-    public void runGame() {
+    public void runGame(){
         System.out.println("\n\n***Welcome to the Text Adventure Game***\n");
 
         boolean running = true;
@@ -196,10 +211,13 @@ public class TextAdventureGame {
         // Här börjar spelloopen
         while(running) {
             // 1. Skriv ut i vilket rum vi är i
-            if(startRoom){
-                System.out.println(getCurrentRoom().toString());
-                startRoom = false;
-            }
+            player.setCurrentRoom(map[row][col]);
+            System.out.println(player.getCurrentRoom().toString());
+            specialRoomEvent();
+           // if(startRoom){
+           //     System.out.println(player.getCurrentRoom().toString());
+           //     startRoom = false;
+            //}
 
             player.getCurrentHealth();
 
@@ -225,7 +243,7 @@ public class TextAdventureGame {
             }
 
             else if(command.equalsIgnoreCase("look")) {
-                String itemDescription = getCurrentRoom().getItemDescription();
+                String itemDescription = player.getCurrentRoom().getItemDescription();
                 System.out.println(itemDescription);
             }
 
@@ -242,13 +260,13 @@ public class TextAdventureGame {
             }
 
             else if(command.equalsIgnoreCase("loot")){
-                if(getCurrentRoom().getItem() == null) {
+                if(player.getCurrentRoom().getItem() == null) {
                     System.out.println("There is no item in here!");
                 }
                 else{
-                    System.out.println("You loot the " + getCurrentRoom().getItemType() + "!");
-                    player.pickUpItem(getCurrentRoom().getItem());
-                    getCurrentRoom().removeItem();
+                    System.out.println("You loot the " + player.getCurrentRoom().getItemType() + "!");
+                    player.pickUpItem(player.getCurrentRoom().getItem());
+                    player.getCurrentRoom().removeItem();
                 }
             }
 
@@ -261,11 +279,7 @@ public class TextAdventureGame {
                 }
             }
 
-            System.out.println(getCurrentRoom().toString());
-
-            specialRoomEvent();
-
-            if(getCurrentRoom().getTrap()){
+            if(player.getCurrentRoom().getTrap()){
                 player.walkOnTrap();
             }
 
