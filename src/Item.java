@@ -4,11 +4,18 @@
 public class Item {
     protected String type;          // what object is it (e.g. name/title/something else.
     protected String description;   // description of object.
+    protected int damage;
 
     // Constructor that creates the item and sets type and description of item.
     public Item(String inType, String inDescription) {
         type = inType;
         description = inDescription;
+    }
+
+    public Item(String inType, String inDescription, int inDamage) {
+        type = inType;
+        description = inDescription;
+        damage = inDamage;
     }
 
     public String getType() {

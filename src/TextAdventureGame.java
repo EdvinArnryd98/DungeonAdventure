@@ -177,20 +177,21 @@ public class TextAdventureGame {
         Room forest = new Room("Forest", "You are in a forest. You can hear the wind blowing in the tree tops.", false, false, false, true, false);
 
         // Creating a dagger and adding it to the room theEntrance.
-        Item dagger = new Item("Dagger", "A small but very deadly dagger.");
+        Item dagger = new Item("Dagger", "A small but very deadly dagger.", 2);
         theEntrance.setItem(dagger);
 
-        axe = new Item("Axe", "A hatchet used for cutting wood");
+        axe = new Item("Axe", "A hatchet used for cutting wood", 4);
         cellar.setItem(axe);
+
+        Item sword = new Item("Sword", "A very sharp and mighty sword left behind by Conan the Barbarian", 10);
+        secretRoom.setItem(sword);
 
         // Creating a chest with three items and places it in the hall on the map.
         Chest chest = new Chest("Chest", "A large chest containing other items");
         Item shield = new Item("Shield", "A massive shield that works as a wall");
         Item potion = new Item("Health potion", "A potion that restores your health");
-        Item sword = new Item("Sword", "A very sharp and mighty sword left behind by Conan the Barbarian");
         chest.addItemsToChest(shield);
         chest.addItemsToChest(potion);
-        chest.addItemsToChest(sword);
         aHall.setItem(chest);
 
         map = new Room[][]{
@@ -206,104 +207,85 @@ public class TextAdventureGame {
         System.out.println("\n\n***Welcome to the Text Adventure Game***\n");
 
         boolean running = true;
-        boolean startRoom = true;
+        boolean playerAlive = true;
+
 
         // Här börjar spelloopen
         while(running) {
             // 1. Skriv ut i vilket rum vi är i
             player.setCurrentRoom(map[row][col]);
             System.out.println(player.getCurrentRoom().toString());
-            specialRoomEvent();
-           // if(startRoom){
-           //     System.out.println(player.getCurrentRoom().toString());
-           //     startRoom = false;
-            //}
-
-            player.getCurrentHealth();
-
-            String[] commandParts = readUserInput();
-            String command = commandParts[0];
-            // 4. Kollar vilket "huvudkommando" som angivits
-            //    Dessa är:
-            //      - go
-            //      - save
-            //      - load
-            //      - quit
-            if(command.equalsIgnoreCase("go")) {
-                // Kontrollera att man har skrivit något efter go, alltså en riktning
-                if(commandParts.length == 2) {
-                    updatePlayerPosition(commandParts[1]);
-                    if(isDoorInDirection) {
-                        System.out.println("Going " + commandParts[1]);
-                    }
-                }
-                else {
-                    System.out.println("You can't go without any direction");
-                }
-            }
-
-            else if(command.equalsIgnoreCase("look")) {
-                String itemDescription = player.getCurrentRoom().getItemDescription();
-                System.out.println(itemDescription);
-            }
-
-            else if(command.equalsIgnoreCase("save")) {
-                save(row, col);
-            }
-
-            else if(command.equalsIgnoreCase("load")) {
-                LoadSaveGame();
-            }
-
-            else if(command.equalsIgnoreCase("quit")) {
-                running = false;
-            }
-
-            else if(command.equalsIgnoreCase("loot")){
-                if(player.getCurrentRoom().getItem() == null) {
-                    System.out.println("There is no item in here!");
-                }
-                else if(player.inventory.size() < player.maxSize){
-                    System.out.println("You loot the " + player.getCurrentRoom().getItemType() + "!");
-                    player.pickUpItem(player.getCurrentRoom().getItem());
-                    player.getCurrentRoom().removeItem();
-                }
-                else{
-                    System.out.println("There your inventory is full!");
-                }
-            }
-
-            else if(command.equalsIgnoreCase("inventory")){
-                if(player.inventory.isEmpty()){
-                    System.out.println("Your inventory is empty.");
-                }
-                else {
-                    player.listInventory();
-                }
-            }
-
-            else if(command.equalsIgnoreCase("drop")){
-                if(player.currentRoom.getItem() == null){
-                    if(commandParts.length == 2) {
-                        player.dropItem(Integer.parseInt(commandParts[1]));
-                    }
-                    else{
-                        System.out.println("You need to input an index to drop an item");
-                    }
-                }
-                else{
-                    System.out.println("There is already an item in here.");
-            }
-        }
 
             if(player.getCurrentRoom().getTrap()){
                 player.walkOnTrap();
             }
-
             if(player.healthNumber() < 1){
                 player.playerDeath();
+                playerAlive = false;
                 running = false;
             }
+            if(playerAlive) {
+                player.getCurrentHealth();
+
+                specialRoomEvent();
+
+                String[] commandParts = readUserInput();
+                String command = commandParts[0];
+                // 4. Kollar vilket "huvudkommando" som angivits
+                //    Dessa är:
+                //      - go
+                //      - save
+                //      - load
+                //      - quit
+                if (command.equalsIgnoreCase("go")) {
+                    // Kontrollera att man har skrivit något efter go, alltså en riktning
+                    if (commandParts.length == 2) {
+                        updatePlayerPosition(commandParts[1]);
+                        if (isDoorInDirection) {
+                            System.out.println("Going " + commandParts[1]);
+                        }
+                    } else {
+                        System.out.println("You can't go without any direction");
+                    }
+                } else if (command.equalsIgnoreCase("look")) {
+                    String itemDescription = player.getCurrentRoom().getItemDescription();
+                    System.out.println(itemDescription);
+                } else if (command.equalsIgnoreCase("save")) {
+                    save(row, col);
+                } else if (command.equalsIgnoreCase("load")) {
+                    LoadSaveGame();
+                } else if (command.equalsIgnoreCase("quit")) {
+                    running = false;
+                } else if (command.equalsIgnoreCase("loot")) {
+                    if (player.getCurrentRoom().getItem() == null) {
+                        System.out.println("There is no item in here!");
+                    } else if (player.inventory.size() < player.maxSize) {
+                        System.out.println("You loot the " + player.getCurrentRoom().getItemType() + "!");
+                        player.pickUpItem(player.getCurrentRoom().getItem());
+                        player.getCurrentRoom().removeItem();
+                    } else {
+                        System.out.println("There your inventory is full!");
+                    }
+                } else if (command.equalsIgnoreCase("inventory")) {
+                    if (player.inventory.isEmpty()) {
+                        System.out.println("Your inventory is empty.");
+                    } else {
+                        player.listInventory();
+                    }
+                } else if (command.equalsIgnoreCase("drop")) {
+                    if (player.currentRoom.getItem() == null) {
+                        if (commandParts.length == 2) {
+                            player.dropItem(Integer.parseInt(commandParts[1]));
+                        } else {
+                            System.out.println("You need to input an index to drop an item");
+                        }
+                    } else {
+                        System.out.println("There is already an item in here.");
+                    }
+                }
+
+            }
+
         }
     }
 
