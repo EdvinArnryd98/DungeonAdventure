@@ -4,6 +4,7 @@ public class Player {
     private String name;
     private int currentHealth;
     Room currentRoom;
+    int maxSize = 4;
     ArrayList<Item> inventory = new ArrayList<Item>();
 
     public Player(String inName, int inStartHealth){
@@ -38,8 +39,22 @@ public class Player {
     public void listInventory() {
         System.out.println("Your inventory:");
         for (int i = 0; i < inventory.size(); i++){
-            System.out.println(inventory.get(i).type);
+            System.out.println(inventory.get(i).type + "(" + (i) + ")");
         }
+    }
+
+    public void dropItem(int itemIndex){
+        if(inventory.isEmpty()) {
+            System.out.println("You don't have any items to drop.");
+        }
+            else if (itemIndex < 0 || itemIndex > 3) {
+                System.out.println("your index is out of bounds");
+            } else {
+                String droppedItem = inventory.get(itemIndex).getType();
+                System.out.println("You dropped: " + droppedItem);
+                getCurrentRoom().setItem(inventory.get(itemIndex));
+                inventory.remove(itemIndex);
+            }
     }
 
     public void pickUpItem(Item item) {

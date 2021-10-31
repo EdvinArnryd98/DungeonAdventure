@@ -263,10 +263,13 @@ public class TextAdventureGame {
                 if(player.getCurrentRoom().getItem() == null) {
                     System.out.println("There is no item in here!");
                 }
-                else{
+                else if(player.inventory.size() < player.maxSize){
                     System.out.println("You loot the " + player.getCurrentRoom().getItemType() + "!");
                     player.pickUpItem(player.getCurrentRoom().getItem());
                     player.getCurrentRoom().removeItem();
+                }
+                else{
+                    System.out.println("There your inventory is full!");
                 }
             }
 
@@ -278,6 +281,20 @@ public class TextAdventureGame {
                     player.listInventory();
                 }
             }
+
+            else if(command.equalsIgnoreCase("drop")){
+                if(player.currentRoom.getItem() == null){
+                    if(commandParts.length == 2) {
+                        player.dropItem(Integer.parseInt(commandParts[1]));
+                    }
+                    else{
+                        System.out.println("You need to input an index to drop an item");
+                    }
+                }
+                else{
+                    System.out.println("There is already an item in here.");
+            }
+        }
 
             if(player.getCurrentRoom().getTrap()){
                 player.walkOnTrap();

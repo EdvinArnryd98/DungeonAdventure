@@ -68,8 +68,6 @@ public class Room {
         }
     }
 
-    //public String lootItemInCurrentRoom() {}
-
     public Item getItem(){
         return item;
     }
