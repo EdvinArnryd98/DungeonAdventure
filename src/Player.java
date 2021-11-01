@@ -3,8 +3,11 @@ import java.util.ArrayList;
 public class Player {
     private String name;
     private int currentHealth;
-    Room currentRoom;
-    int maxSize = 4;
+    private Room currentRoom;
+    private int inventoryMaxSize = 4;
+    private int potionCount = 0;
+    private boolean hasBomb;
+    ArrayList<Item> hand = new ArrayList<Item>();
     ArrayList<Item> inventory = new ArrayList<Item>();
 
     public Player(String inName, int inStartHealth){
@@ -12,19 +15,29 @@ public class Player {
         currentHealth = inStartHealth;
     }
 
-    public void walkOnTrap() {
-        currentHealth -= 10;
+    public void usePotion(){
+        if(potionCount > 0){
+            System.out.println("You drink a health potion");
+            currentHealth += 15;
+            potionCount--;
+        }
+        else{
+            System.out.println("You have no more potions left");
+        }
     }
 
-    public void findHealthPotion() {
-        currentHealth += 8;
+    public void walkOnTrap() {
+        currentHealth -= 10;
     }
 
     public void getCurrentHealth() {
         System.out.println("Your HP: " + currentHealth);
     }
 
-    public int healthNumber(){
+    public void setHealthNumber(int newHp) {
+        currentHealth = newHp;
+    }
+    public int getHealthNumber(){
         return currentHealth;
     }
 
@@ -36,7 +49,14 @@ public class Player {
         System.out.println("Your Health got too low.\nYou don't feel so good...");
     }
 
+    public int getInventoryMaxSize(){
+        return inventoryMaxSize;
+    }
+
     public void listInventory() {
+        if(!hand.isEmpty()) {
+            System.out.println("Wielding: " + hand.get(0).type);
+        }
         System.out.println("Your inventory:");
         for (int i = 0; i < inventory.size(); i++){
             System.out.println(inventory.get(i).type + "(" + (i) + ")");
@@ -59,6 +79,10 @@ public class Player {
 
     public void pickUpItem(Item item) {
         inventory.add(item);
+    }
+
+    public void equipItem(Item item){
+            hand.add(item);
     }
 
     public void setCurrentRoom(Room room){

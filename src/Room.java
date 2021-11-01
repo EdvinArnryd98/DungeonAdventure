@@ -7,6 +7,7 @@ public class Room {
     private String name;
     private String description;
     private Item item;
+    private Monster monster;
     private boolean hasTrap;
     private boolean southDoor;
     private boolean westDoor;
@@ -66,6 +67,13 @@ public class Room {
         } else {    // else if item is null. i.e. there is no item stored in item (by adding iten through the function setItem.
             return "No item found";
         }
+    }
+
+    public Monster getMonster() {
+        return monster;
+    }
+    public void setMonster(Monster inMonster){
+        monster = inMonster;
     }
 
     public Item getItem(){

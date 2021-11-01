@@ -9,6 +9,8 @@ public class TextAdventureGame {
     int row;
     int col;
 
+    boolean playerAlive = true;
+
     boolean isWellFull = true;
     boolean isGardenTreeExisting = true;
 
@@ -158,7 +160,7 @@ public class TextAdventureGame {
     public void initialization() {
         // Initialisering
 
-        player = new Player("Player1", 19);
+        player = new Player("Player", 19);
 
         Room pinkRoom = new Room("Pink room", "This is a room with pink walls filled with pink furniture", false, true, false, false, true);
         Room aHall = new Room("A hall", "A large hallway with a fancy rug on the floor", false, false, false, true, true);
@@ -194,6 +196,8 @@ public class TextAdventureGame {
         chest.addItemsToChest(potion);
         aHall.setItem(chest);
 
+        Monster troll = new Monster("Troll", "This troll is tall and smells..", 8, 30);
+        arena.setMonster(troll);
         map = new Room[][]{
                 {pinkRoom, secretRoom, arena},
                 {theEntrance, aDarkCave, pit},
@@ -203,12 +207,38 @@ public class TextAdventureGame {
         col = 0;
     }
 
+    public void enterBattle(){
+        System.out.println("You have stumbled upon a " + player.getCurrentRoom().getMonster().getName() + ", it is time to fight!");
+        while(playerAlive || player.getCurrentRoom().getMonster().getHealth() > 1){
+            System.out.println("What do you do?");
+            System.out.println("1. Attack");
+            System.out.println("2. Drink potion");
+            String command = input.nextLine();
+            if(command.equals("1")){
+                System.out.println("You attack the " + player.getCurrentRoom().getMonster().getName());
+            }
+            else if(command.equals("2")){
+                player.usePotion();
+            }
+            else{
+                System.out.println("Command was unacceptable, try again");
+            }
+            System.out.println("The " + player.getCurrentRoom().getMonster().getName() + "'s health: " + player.getCurrentRoom().getMonster().getHealth());
+            System.out.println("The monster strikes back");
+            player.setHealthNumber(player.getHealthNumber() - player.getCurrentRoom().getMonster().getDamage());
+            if(player.getHealthNumber() < 1){
+                playerAlive = false;
+            }
+            else{
+                player.getCurrentHealth();
+            }
+        }
+    }
+
     public void runGame(){
         System.out.println("\n\n***Welcome to the Text Adventure Game***\n");
 
         boolean running = true;
-        boolean playerAlive = true;
-
 
         // Här börjar spelloopen
         while(running) {
@@ -219,7 +249,7 @@ public class TextAdventureGame {
             if(player.getCurrentRoom().getTrap()){
                 player.walkOnTrap();
             }
-            if(player.healthNumber() < 1){
+            if(player.getHealthNumber() < 1){
                 player.playerDeath();
                 playerAlive = false;
                 running = false;
@@ -228,6 +258,9 @@ public class TextAdventureGame {
                 player.getCurrentHealth();
 
                 specialRoomEvent();
+                if(player.getCurrentRoom().getMonster() != null){
+                    enterBattle();
+                }
 
                 String[] commandParts = readUserInput();
                 String command = commandParts[0];
@@ -244,42 +277,79 @@ public class TextAdventureGame {
                         if (isDoorInDirection) {
                             System.out.println("Going " + commandParts[1]);
                         }
-                    } else {
+                    }
+                    else {
                         System.out.println("You can't go without any direction");
                     }
-                } else if (command.equalsIgnoreCase("look")) {
+                }
+                else if (command.equalsIgnoreCase("look")) {
                     String itemDescription = player.getCurrentRoom().getItemDescription();
                     System.out.println(itemDescription);
-                } else if (command.equalsIgnoreCase("save")) {
+                }
+                else if (command.equalsIgnoreCase("save")) {
                     save(row, col);
-                } else if (command.equalsIgnoreCase("load")) {
+                }
+                else if (command.equalsIgnoreCase("load")) {
                     LoadSaveGame();
-                } else if (command.equalsIgnoreCase("quit")) {
+                }
+                else if (command.equalsIgnoreCase("quit")) {
                     running = false;
-                } else if (command.equalsIgnoreCase("loot")) {
+                }
+                else if (command.equalsIgnoreCase("loot")) {
                     if (player.getCurrentRoom().getItem() == null) {
                         System.out.println("There is no item in here!");
-                    } else if (player.inventory.size() < player.maxSize) {
+                    }
+                    else if (player.inventory.size() < player.getInventoryMaxSize()) {
                         System.out.println("You loot the " + player.getCurrentRoom().getItemType() + "!");
                         player.pickUpItem(player.getCurrentRoom().getItem());
                         player.getCurrentRoom().removeItem();
                     } else {
                         System.out.println("There your inventory is full!");
                     }
-                } else if (command.equalsIgnoreCase("inventory")) {
-                    if (player.inventory.isEmpty()) {
-                        System.out.println("Your inventory is empty.");
-                    } else {
+                }
+                else if (command.equalsIgnoreCase("inventory")) {
                         player.listInventory();
+                }
+                else if(command.equalsIgnoreCase("equip")){
+                    if (commandParts.length == 2) {
+                        if(!player.inventory.isEmpty()) {
+                            if(player.hand.isEmpty()) {
+                                System.out.println("You equip the " + player.inventory.get(Integer.parseInt(commandParts[1])).type);
+                                player.equipItem(player.inventory.get(Integer.parseInt(commandParts[1])));
+                                player.inventory.remove(Integer.parseInt(commandParts[1]));
+                            }
+                            else{
+                                System.out.println("You already have an item equipped");
+                            }
+                        }
+                        else if(player.inventory.isEmpty()){
+                            System.out.println("Your inventory is empty");
+                        }
                     }
-                } else if (command.equalsIgnoreCase("drop")) {
-                    if (player.currentRoom.getItem() == null) {
+                    else{
+                        System.out.println("You need to input an index to equip an item");
+                    }
+                }
+                else if(command.equalsIgnoreCase("unequip")){
+                    if(player.hand.isEmpty()){
+                        System.out.println("You have no item equipped");
+                    }
+                    else{
+                        System.out.println("You unequipped " + player.hand.get(0).type);
+                        player.inventory.add(player.hand.get(0));
+                        player.hand.remove(0);
+                    }
+                }
+                else if (command.equalsIgnoreCase("drop")) {
+                    if (player.getCurrentRoom().getItem() == null) {
                         if (commandParts.length == 2) {
                             player.dropItem(Integer.parseInt(commandParts[1]));
-                        } else {
+                        }
+                        else {
                             System.out.println("You need to input an index to drop an item");
                         }
-                    } else {
+                    }
+                    else {
                         System.out.println("There is already an item in here.");
                     }
                 }
