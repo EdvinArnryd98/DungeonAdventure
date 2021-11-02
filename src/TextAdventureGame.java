@@ -144,7 +144,7 @@ public class TextAdventureGame {
             String command = commandParts[0];
             if(command.equalsIgnoreCase("yes")){
                 System.out.println("You drink from the well and heal 15 points");
-                player.addCurrentHealth(15);
+                player.addCurrentHealth(20);
                 isWellFull = false;
             }
             else if(command.equalsIgnoreCase("no")){
@@ -160,7 +160,7 @@ public class TextAdventureGame {
     public void initialization() {
         // Initialisering
 
-        player = new Player("Player", 19);
+        player = new Player("Player", 40);
 
         Room pinkRoom = new Room("Pink room", "This is a room with pink walls filled with pink furniture", false, true, false, false, true);
         Room aHall = new Room("A hall", "A large hallway with a fancy rug on the floor", false, false, false, true, true);
@@ -196,7 +196,7 @@ public class TextAdventureGame {
         chest.addItemsToChest(potion);
         aHall.setItem(chest);
 
-        Monster troll = new Monster("Troll", "This troll is tall and smells..", 8, 30);
+        Monster troll = new Monster("Troll", "The troll looks angry", 8, 30);
         arena.setMonster(troll);
         map = new Room[][]{
                 {pinkRoom, secretRoom, arena},
@@ -209,28 +209,59 @@ public class TextAdventureGame {
 
     public void enterBattle(){
         System.out.println("You have stumbled upon a " + player.getCurrentRoom().getMonster().getName() + ", it is time to fight!");
-        while(playerAlive || player.getCurrentRoom().getMonster().getHealth() > 1){
+        boolean monsterAlive = true;
+        boolean isPlayerFighting = true;
+        while(playerAlive && monsterAlive && isPlayerFighting){
             System.out.println("What do you do?");
             System.out.println("1. Attack");
             System.out.println("2. Drink potion");
+            System.out.println("3. Run!!!");
             String command = input.nextLine();
             if(command.equals("1")){
-                System.out.println("You attack the " + player.getCurrentRoom().getMonster().getName());
+                if(player.hand.isEmpty()){
+                    System.out.println("You tried to attack without an item equipped!!!");
+                }
+                else if(player.hand.size() > 0) {
+                    System.out.println("You attack the " + player.getCurrentRoom().getMonster().getName());
+                    System.out.println("You swing your " + player.hand.get(0).type + " to deal " + player.hand.get(0).damage + " damage!");
+                    player.getCurrentRoom().getMonster().setHealth(player.getCurrentRoom().getMonster().getHealth() - player.hand.get(0).damage);
+                    if (player.getCurrentRoom().getMonster().getHealth() < 1) {
+                        monsterAlive = false;
+                    }
+                }
             }
             else if(command.equals("2")){
                 player.usePotion();
             }
+            else if(command.equals("3")){
+                row = 1;
+                col = 0;
+                player.setCurrentRoom(map[row][col]);
+                System.out.println("You ran back to the entrance and lost 15 health");
+                player.setHealthNumber(player.getHealthNumber() - 15);
+                System.out.println(player.getCurrentRoom().toString());
+                isPlayerFighting = false;
+            }
             else{
                 System.out.println("Command was unacceptable, try again");
             }
-            System.out.println("The " + player.getCurrentRoom().getMonster().getName() + "'s health: " + player.getCurrentRoom().getMonster().getHealth());
-            System.out.println("The monster strikes back");
-            player.setHealthNumber(player.getHealthNumber() - player.getCurrentRoom().getMonster().getDamage());
-            if(player.getHealthNumber() < 1){
-                playerAlive = false;
-            }
-            else{
-                player.getCurrentHealth();
+            if(isPlayerFighting) {
+                if (monsterAlive) {
+                    System.out.println("The " + player.getCurrentRoom().getMonster().getName() + "'s health: " + player.getCurrentRoom().getMonster().getHealth());
+                    System.out.println("The " + player.getCurrentRoom().getMonster().getName() + " strikes back and deals " + player.getCurrentRoom().getMonster().getDamage() + " damage to you!");
+                    player.setHealthNumber(player.getHealthNumber() - player.getCurrentRoom().getMonster().getDamage());
+                } else {
+                    System.out.println("Congratulations! You have slain the " + player.getCurrentRoom().getMonster().getName() + "!");
+                    player.getCurrentRoom().setMonster(null);
+                }
+                if (player.getHealthNumber() < 1) {
+                    playerAlive = false;
+                } else {
+                    player.getCurrentHealth();
+                }
+                if (!monsterAlive) {
+                    System.out.println("You cleared the room. Where do you want to go next?");
+                }
             }
         }
     }
@@ -261,99 +292,84 @@ public class TextAdventureGame {
                 if(player.getCurrentRoom().getMonster() != null){
                     enterBattle();
                 }
-
-                String[] commandParts = readUserInput();
-                String command = commandParts[0];
-                // 4. Kollar vilket "huvudkommando" som angivits
-                //    Dessa är:
-                //      - go
-                //      - save
-                //      - load
-                //      - quit
-                if (command.equalsIgnoreCase("go")) {
-                    // Kontrollera att man har skrivit något efter go, alltså en riktning
-                    if (commandParts.length == 2) {
-                        updatePlayerPosition(commandParts[1]);
-                        if (isDoorInDirection) {
-                            System.out.println("Going " + commandParts[1]);
-                        }
-                    }
-                    else {
-                        System.out.println("You can't go without any direction");
-                    }
-                }
-                else if (command.equalsIgnoreCase("look")) {
-                    String itemDescription = player.getCurrentRoom().getItemDescription();
-                    System.out.println(itemDescription);
-                }
-                else if (command.equalsIgnoreCase("save")) {
-                    save(row, col);
-                }
-                else if (command.equalsIgnoreCase("load")) {
-                    LoadSaveGame();
-                }
-                else if (command.equalsIgnoreCase("quit")) {
-                    running = false;
-                }
-                else if (command.equalsIgnoreCase("loot")) {
-                    if (player.getCurrentRoom().getItem() == null) {
-                        System.out.println("There is no item in here!");
-                    }
-                    else if (player.inventory.size() < player.getInventoryMaxSize()) {
-                        System.out.println("You loot the " + player.getCurrentRoom().getItemType() + "!");
-                        player.pickUpItem(player.getCurrentRoom().getItem());
-                        player.getCurrentRoom().removeItem();
-                    } else {
-                        System.out.println("There your inventory is full!");
-                    }
-                }
-                else if (command.equalsIgnoreCase("inventory")) {
-                        player.listInventory();
-                }
-                else if(command.equalsIgnoreCase("equip")){
-                    if (commandParts.length == 2) {
-                        if(!player.inventory.isEmpty()) {
-                            if(player.hand.isEmpty()) {
-                                System.out.println("You equip the " + player.inventory.get(Integer.parseInt(commandParts[1])).type);
-                                player.equipItem(player.inventory.get(Integer.parseInt(commandParts[1])));
-                                player.inventory.remove(Integer.parseInt(commandParts[1]));
+                    if(playerAlive) {
+                        String[] commandParts = readUserInput();
+                        String command = commandParts[0];
+                        // 4. Kollar vilket "huvudkommando" som angivits
+                        //    Dessa är:
+                        //      - go
+                        //      - save
+                        //      - load
+                        //      - quit
+                        if (command.equalsIgnoreCase("go")) {
+                            // Kontrollera att man har skrivit något efter go, alltså en riktning
+                            if (commandParts.length == 2) {
+                                updatePlayerPosition(commandParts[1]);
+                                if (isDoorInDirection) {
+                                    System.out.println("Going " + commandParts[1]);
+                                }
+                            } else {
+                                System.out.println("You can't go without any direction");
                             }
-                            else{
-                                System.out.println("You already have an item equipped");
+                        } else if (command.equalsIgnoreCase("look")) {
+                            String itemDescription = player.getCurrentRoom().getItemDescription();
+                            System.out.println(itemDescription);
+                        } else if (command.equalsIgnoreCase("save")) {
+                            save(row, col);
+                        } else if (command.equalsIgnoreCase("load")) {
+                            LoadSaveGame();
+                        } else if (command.equalsIgnoreCase("quit")) {
+                            running = false;
+                        } else if (command.equalsIgnoreCase("loot")) {
+                            if (player.getCurrentRoom().getItem() == null) {
+                                System.out.println("There is no item in here!");
+                            } else if (player.inventory.size() < player.getInventoryMaxSize()) {
+                                System.out.println("You loot the " + player.getCurrentRoom().getItemType() + "!");
+                                player.pickUpItem(player.getCurrentRoom().getItem());
+                                player.getCurrentRoom().removeItem();
+                            } else {
+                                System.out.println("Your inventory is full!");
+                            }
+                        } else if (command.equalsIgnoreCase("inventory")) {
+                            player.listInventory();
+                            player.potionCountTostring();
+                        } else if (command.equalsIgnoreCase("equip")) {
+                            if (commandParts.length == 2) {
+                                if (!player.inventory.isEmpty()) {
+                                    if (player.hand.isEmpty()) {
+                                        System.out.println("You equip the " + player.inventory.get(Integer.parseInt(commandParts[1])).type);
+                                        player.equipItem(player.inventory.get(Integer.parseInt(commandParts[1])));
+                                        player.inventory.remove(Integer.parseInt(commandParts[1]));
+                                    } else {
+                                        System.out.println("You already have an item equipped");
+                                    }
+                                } else if (player.inventory.isEmpty()) {
+                                    System.out.println("Your inventory is empty");
+                                }
+                            } else {
+                                System.out.println("You need to input an index to equip an item");
+                            }
+                        } else if (command.equalsIgnoreCase("unequip")) {
+                            if (player.hand.isEmpty()) {
+                                System.out.println("You have no item equipped");
+                            } else {
+                                System.out.println("You unequipped " + player.hand.get(0).type);
+                                player.inventory.add(player.hand.get(0));
+                                player.hand.remove(0);
+                            }
+                        } else if (command.equalsIgnoreCase("drop")) {
+                            if (player.getCurrentRoom().getItem() == null) {
+                                if (commandParts.length == 2) {
+                                    player.dropItem(Integer.parseInt(commandParts[1]));
+                                } else {
+                                    System.out.println("You need to input an index to drop an item");
+                                }
+                            } else {
+                                System.out.println("There is already an item in here.");
                             }
                         }
-                        else if(player.inventory.isEmpty()){
-                            System.out.println("Your inventory is empty");
-                        }
-                    }
-                    else{
-                        System.out.println("You need to input an index to equip an item");
-                    }
-                }
-                else if(command.equalsIgnoreCase("unequip")){
-                    if(player.hand.isEmpty()){
-                        System.out.println("You have no item equipped");
-                    }
-                    else{
-                        System.out.println("You unequipped " + player.hand.get(0).type);
-                        player.inventory.add(player.hand.get(0));
-                        player.hand.remove(0);
-                    }
-                }
-                else if (command.equalsIgnoreCase("drop")) {
-                    if (player.getCurrentRoom().getItem() == null) {
-                        if (commandParts.length == 2) {
-                            player.dropItem(Integer.parseInt(commandParts[1]));
-                        }
-                        else {
-                            System.out.println("You need to input an index to drop an item");
-                        }
-                    }
-                    else {
-                        System.out.println("There is already an item in here.");
-                    }
-                }
 
+                    }
             }
 
         }

@@ -5,7 +5,7 @@ public class Player {
     private int currentHealth;
     private Room currentRoom;
     private int inventoryMaxSize = 4;
-    private int potionCount = 0;
+    private int potionCount = 3;
     private boolean hasBomb;
     ArrayList<Item> hand = new ArrayList<Item>();
     ArrayList<Item> inventory = new ArrayList<Item>();
@@ -17,13 +17,17 @@ public class Player {
 
     public void usePotion(){
         if(potionCount > 0){
-            System.out.println("You drink a health potion");
+            System.out.println("You drink a health potion and gain 15 hp");
             currentHealth += 15;
             potionCount--;
         }
         else{
             System.out.println("You have no more potions left");
         }
+    }
+
+    public void potionCountTostring(){
+        System.out.println("Potions left: " + potionCount);
     }
 
     public void walkOnTrap() {

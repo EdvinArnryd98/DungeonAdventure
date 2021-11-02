@@ -22,4 +22,8 @@ public class Monster {
     public int getHealth(){
         return health;
     }
+
+    public void setHealth(int inHealth){
+        health = inHealth;
+    }
 }
