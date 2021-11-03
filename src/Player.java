@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class Player {
+public class Player implements iPlayer{
     private String name;
     private int currentHealth;
     private Room currentRoom;
