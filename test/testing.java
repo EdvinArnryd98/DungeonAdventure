@@ -6,20 +6,20 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class testing {
     @Test
     public void testCreatePlayerHealth(){
-        Player player = new Player("Player1", 20);
+        Player player = new Player(20);
         assertEquals(20, player.getHealthNumber());
     }
 
     @Test
     public void testPlayerAddHealth(){
-        Player player = new Player("player1", 20);
+        Player player = new Player( 20);
         player.addCurrentHealth(10);
         assertEquals(30, player.getHealthNumber());
     }
 
     @Test
     public void testPlayerWalkedInTrap(){
-        Player player = new Player("player1", 20);
+        Player player = new Player(20);
         player.walkOnTrap();
         assertEquals(10, player.getHealthNumber());
     }
@@ -32,14 +32,14 @@ public class testing {
 
     @Test
     public void testPlayerUsePotion(){
-        Player player = new Player("player1", 20);
+        Player player = new Player(20);
         player.usePotion();
         assertEquals(2, player.getPotionCount());
     }
 
     @Test
     public void testAddPlayerPotion(){
-        Player player = new Player("player1", 20);
+        Player player = new Player( 20);
         player.addPotionCount();
         assertEquals(4, player.getPotionCount());
     }

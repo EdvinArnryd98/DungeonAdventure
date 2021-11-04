@@ -1,11 +1,8 @@
 package kyh.textadventure;
 
-import kyh.textadventure.iPlayer;
-
 import java.util.ArrayList;
 
 public class Player implements iPlayer {
-    private String name;
     private int currentHealth;
     private Room currentRoom;
     private int inventoryMaxSize = 4;
@@ -13,8 +10,7 @@ public class Player implements iPlayer {
     ArrayList<Item> hand = new ArrayList<Item>();
     ArrayList<Item> inventory = new ArrayList<Item>();
 
-    public Player(String inName, int inStartHealth){
-        name = inName;
+    public Player(int inStartHealth){
         currentHealth = inStartHealth;
     }
 
