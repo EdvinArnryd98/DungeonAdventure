@@ -2,9 +2,6 @@ package kyh.textadventure;
 
 public class Room {
 
-    // We have variables for name, description and other parameters since this is necessary to determine the players
-    // current state in the world.
-
     private String name;
     private String description;
     private Item item;
@@ -15,9 +12,6 @@ public class Room {
     private boolean northDoor;
     private boolean eastDoor;
 
-    public int numberOfDoors = 2;
-
-    // Store the default values for name and description of a room.
     public Room(String inName, String inDescription, boolean inHasTrap, boolean inSouthDoor, boolean inWestDoor, boolean inNorthDoor, boolean inEastDoor) {
         name = inName;
         description = inDescription;
@@ -60,12 +54,10 @@ public class Room {
         southDoor = true;
     }
 
-    // Return the description of an item.
     public String getItemDescription() {
-        // if item is not null (i.e. we have already stored an item in item.
         if(item != null) {
             return item.toString();
-        } else {    // else if item is null. i.e. there is no item stored in item (by adding iten through the function setItem.
+        } else {
             return "No item found";
         }
     }
@@ -97,12 +89,10 @@ public class Room {
         description = newDescription;
     }
 
-    // Store a created item in the item variable in room.
     public void setItem(Item inItem) {
         item = inItem;
     }
 
-    // Create a string representation of a room to show in the main game loop.
     @Override
     public String toString() {
         String roomString = "\nCurrent position: " + getName() + "\n\n";                           // roomstring: "A hall"
