@@ -1,12 +1,15 @@
+package kyh.textadventure;
+
+import kyh.textadventure.iPlayer;
+
 import java.util.ArrayList;
 
-public class Player implements iPlayer{
+public class Player implements iPlayer {
     private String name;
     private int currentHealth;
     private Room currentRoom;
     private int inventoryMaxSize = 4;
     private int potionCount = 3;
-    private boolean hasBomb;
     ArrayList<Item> hand = new ArrayList<Item>();
     ArrayList<Item> inventory = new ArrayList<Item>();
 
@@ -25,6 +28,13 @@ public class Player implements iPlayer{
             System.out.println("You have no more potions left");
         }
     }
+    public void addPotionCount(){
+        potionCount++;
+    }
+
+    public int getPotionCount(){
+        return potionCount;
+    }
 
     public void potionCountTostring(){
         System.out.println("Potions left: " + potionCount);
@@ -41,6 +51,7 @@ public class Player implements iPlayer{
     public void setHealthNumber(int newHp) {
         currentHealth = newHp;
     }
+
     public int getHealthNumber(){
         return currentHealth;
     }

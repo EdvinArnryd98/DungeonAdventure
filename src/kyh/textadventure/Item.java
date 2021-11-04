@@ -1,3 +1,4 @@
+package kyh.textadventure;
 
 // Basic itemclass for textadventure game.
 // All items will be of this type, or derived from this type.

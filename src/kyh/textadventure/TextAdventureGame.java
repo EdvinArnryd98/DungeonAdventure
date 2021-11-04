@@ -1,3 +1,5 @@
+package kyh.textadventure;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -160,7 +162,7 @@ public class TextAdventureGame {
     public void initialization() {
         // Initialisering
 
-        player = new Player("Player", 40);
+        player = new Player("kyh.textadventure.Player", 40);
 
         Room pinkRoom = new Room("Pink room", "This is a room with pink walls filled with pink furniture", false, true, false, false, true);
         Room aHall = new Room("A hall", "A large hallway with a fancy rug on the floor", false, false, false, true, true);
@@ -170,7 +172,7 @@ public class TextAdventureGame {
         Room aDarkCave = new Room("A dark cave", "A very dark cave without any lights, and it is close to pitch black.", false, true, false, true, true);
         Room pit = new Room("Pit", "Watch out! You fell into the pit", true, false, true, false, false);
 
-        Room secretRoom = new Room("Secret Room", "There is a big room with a large door, but the door is locked.", false, true, true, false, true);
+        Room secretRoom = new Room("Secret kyh.textadventure.Room", "There is a big room with a large door, but the door is locked.", false, true, true, false, true);
         garden = new Room("Garden", "You walk out in the garden. There is a tree blocking the way.", false, false, true, true, true);
         Room cellar = new Room("Cellar", "This room is cold, seems like nobody has been here in a while.", false, false, true, false, true);
 
@@ -189,7 +191,7 @@ public class TextAdventureGame {
         secretRoom.setItem(sword);
 
         // Creating a chest with three items and places it in the hall on the map.
-        Chest chest = new Chest("Chest", "A large chest containing other items");
+        Chest chest = new Chest("kyh.textadventure.Chest", "A large chest containing other items");
         Item shield = new Item("Shield", "A massive shield that works as a wall");
         Item potion = new Item("Health potion", "A potion that restores your health");
         chest.addItemsToChest(shield);

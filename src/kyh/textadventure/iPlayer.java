@@ -1,3 +1,5 @@
+package kyh.textadventure;
+
 public interface iPlayer {
 
     void setHealthNumber(int newHp);

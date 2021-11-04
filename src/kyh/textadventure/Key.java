@@ -1,3 +1,5 @@
+package kyh.textadventure;
+
 public class Key extends Item{
 
     private String unlockDoorDirection;

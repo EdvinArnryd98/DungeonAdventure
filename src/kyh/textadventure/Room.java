@@ -1,3 +1,4 @@
+package kyh.textadventure;
 
 public class Room {
 
